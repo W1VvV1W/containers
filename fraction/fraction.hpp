@@ -9,8 +9,10 @@
 
 #include <numeric>
 
-/* GCD and LCM from stack overflow :3
-*  If you are including this file to your project
+#include <stdint.h>
+
+/** GCD and LCM from stack overflow :3
+*  If you are going to include this file to your project,
 *  include a file with your gcd and lcm to avoid errors
 */
 template<typename T>
@@ -38,92 +40,93 @@ class Fraction {
     T numerator = 0, denominator = 0;
 
     Fraction() {}
-    Fraction(Fraction& rhs) { *this = rhs; }
+    Fraction(Fraction& rhs) { numerator = rhs.numerator; denominator = rhs.denominator; }
     Fraction(T& numerator_a, T& denominator_a) : numerator(numerator_a), denominator(denominator_a) {}
-    Fraction(const T& numerator_a, const T& denominator_a) : numerator(numerator_a), denominator(denominator_a) {}
+    Fraction(const T&& numerator_a, const T&& denominator_a) : numerator(numerator_a), denominator(denominator_a) {}
     ~Fraction() {}
 
     T common_denominator_with(Fraction& rhs) { return lcm<T>(this->denominator, rhs.denominator); }
     void reduce_to_common_denominator_with(Fraction& rhs);
     void reduce();
+    uint64_t integer_part();
 
-    const bool operator!=(const Fraction& rhs);
-    const bool operator==(const Fraction& rhs);
-    const bool operator>=(const Fraction& rhs);
-    const bool operator<=(const Fraction& rhs);
-    const bool operator> (const Fraction& rhs);
-    const bool operator< (const Fraction& rhs);
+    bool operator!=(Fraction& rhs);
+    bool operator==(Fraction& rhs);
+    bool operator>=(Fraction& rhs);
+    bool operator<=(Fraction& rhs);
+    bool operator> (Fraction& rhs);
+    bool operator< (Fraction& rhs);
 
     Fraction operator- ();
     Fraction operator+ ();
     Fraction operator++();
     Fraction operator--();
 
-    Fraction operator-=(const Fraction& rhs);
-    Fraction operator+=(const Fraction& rhs);
-    Fraction operator- (const Fraction& rhs);
-    Fraction operator+ (const Fraction& rhs);
+    Fraction operator-=(Fraction& rhs);
+    Fraction operator+=(Fraction& rhs);
+    Fraction operator- (Fraction& rhs);
+    Fraction operator+ (Fraction& rhs);
 
-    Fraction operator/=(const Fraction& rhs);
-    Fraction operator*=(const Fraction& rhs);
-    Fraction operator/ (const Fraction& rhs);
-    Fraction operator* (const Fraction& rhs);
+    Fraction operator/=(Fraction& rhs);
+    Fraction operator*=(Fraction& rhs);
+    Fraction operator/ (Fraction& rhs);
+    Fraction operator* (Fraction& rhs);
 
 };
 
 template<typename T>
 void Fraction<T>::reduce() {
-    int div = gcd(this->numerator, this->denominator);
+    T div = gcd<T>(numerator, denominator);
     numerator /= div;
     denominator /= div;
 }
 
 template<typename T>
 void Fraction<T>::reduce_to_common_denominator_with(Fraction<T>& rhs) {
-    T common_denominator = common_denominator_with(rhs);
-    this->numerator = common_denominator/this->denominator * this->numerator;
-    rhs.numerator = common_denominator/rhs.denominator * rhs.numerator;
-    this->denominator = common_denominator;
-    rhs.denominator = common_denominator;
+    int low_com_sub = lcm<T>(this->denominator, rhs.denominator);
+    this->numerator *= low_com_sub/this->denominator;
+    rhs.numerator *= low_com_sub/rhs.denominator;
+    this->denominator = low_com_sub;
+    rhs.denominator = low_com_sub;
 }
 
 template<typename T>
-const bool Fraction<T>::operator!=(const Fraction<T>& rhs) {
+bool Fraction<T>::operator!=(Fraction<T>& rhs) {
     if(this->denominator == rhs.denominator) return this->numerator != rhs.numerator;
     T common_denominator = common_denominator_with(rhs);
     return this->numerator*(common_denominator/this->denominator) != rhs.numerator*(common_denominator/rhs.denominator);
 }
 
 template<typename T>
-const bool Fraction<T>::operator==(const Fraction<T>& rhs) {
+bool Fraction<T>::operator==(Fraction<T>& rhs) {
     if(this->denominator == rhs.denominator) return this->numerator == rhs.numerator;
     T common_denominator = common_denominator_with(rhs);
     return this->numerator*(common_denominator/this->denominator) == rhs.numerator*(common_denominator/rhs.denominator);
 }
 
 template<typename T>
-const bool Fraction<T>::operator>=(const Fraction<T>& rhs) {
+bool Fraction<T>::operator>=(Fraction<T>& rhs) {
     if(this->denominator == rhs.denominator) return this->numerator >= rhs.numerator;
     T common_denominator = common_denominator_with(rhs);
     return this->numerator*(common_denominator/this->denominator) >= rhs.numerator*(common_denominator/rhs.denominator);
 }
 
 template<typename T>
-const bool Fraction<T>::operator<=(const Fraction<T>& rhs) {
+bool Fraction<T>::operator<=(Fraction<T>& rhs) {
     if(this->denominator == rhs.denominator) return this->numerator <= rhs.numerator;
     T common_denominator = common_denominator_with(rhs);
     return this->numerator*(common_denominator/this->denominator) <= rhs.numerator*(common_denominator/rhs.denominator);
 }
 
 template<typename T>
-const bool Fraction<T>::operator> (const Fraction<T>& rhs) {
+bool Fraction<T>::operator> (Fraction<T>& rhs) {
     if(this->denominator == rhs.denominator) return this->numerator > rhs.numerator;
     T common_denominator = common_denominator_with(rhs);
     return this->numerator*(common_denominator/this->denominator) > rhs.numerator*(common_denominator/rhs.denominator);
 }
 
 template<typename T>
-const bool Fraction<T>::operator< (const Fraction<T>& rhs) {
+ bool Fraction<T>::operator< (Fraction<T>& rhs) {
     if(this->denominator == rhs.denominator) return this->numerator < rhs.numerator;
     T common_denominator = common_denominator_with(rhs);
     return this->numerator*(common_denominator/this->denominator) < rhs.numerator*(common_denominator/rhs.denominator);
@@ -154,44 +157,57 @@ Fraction<T> Fraction<T>::operator--() {
 }
 
 template<typename T>
-Fraction<T> Fraction<T>::operator-=(const Fraction<T>& rhs) {
+Fraction<T> Fraction<T>::operator-=(Fraction<T>& rhs) {
     if(this->denominator == rhs.denominator)
-        return this->numerator -= rhs.numerator;
-    this->reduce_to_common_denominator_with(rhs);
-    this->numerator-=rhs.numerator;
+        this->numerator -= rhs.numerator;
+    else {
+        this->reduce_to_common_denominator_with(rhs);
+        this->numerator -= rhs.numerator;
+    }
+    this->reduce();
+    return *this;
 }
 
 template<typename T>
-Fraction<T> Fraction<T>::operator+=(const Fraction<T>& rhs) {
+Fraction<T> Fraction<T>::operator+=(Fraction<T>& rhs) {
     if(this->denominator == rhs.denominator)
-        return this->numerator += rhs.numerator;
-    this->reduce_to_common_denominator_with(rhs);
-    this->numerator+=rhs.numerator;
+        this->numerator += rhs.numerator;
+    else {
+        this->reduce_to_common_denominator_with(rhs);
+        this->numerator += rhs.numerator;
+    }
+    this->reduce();
+    return *this;
 }
 
 template<typename T>
-Fraction<T> Fraction<T>::operator- (const Fraction<T>& rhs) {
+Fraction<T> Fraction<T>::operator- (Fraction<T>& rhs) {
+    Fraction<T> tmp(*this);
     if(this->denominator == rhs.denominator)
-        return Fraction<T>(this->numerator - rhs.numerator, this->denominator);
-    Fraction<T> tmp;
-    tmp.reduce_to_common_denominator_with(rhs);
-    tmp.numerator -= rhs.numerator;
+        tmp.numerator -= rhs.numerator;
+    else {
+        tmp.reduce_to_common_denominator_with(rhs);
+        tmp.numerator -= rhs.numerator;
+    }
+    tmp.reduce();
     return tmp;
 }
 
 template<typename T>
-Fraction<T> Fraction<T>::operator+ (const Fraction<T>& rhs) {
+Fraction<T> Fraction<T>::operator+ (Fraction<T>& rhs) {
+    Fraction<T> tmp(*this);
     if(this->denominator == rhs.denominator)
-        return Fraction<T>(this->numerator + rhs.numerator, this->denominator);
-    Fraction<T> tmp;
-    tmp.reduce_to_common_denominator_with(rhs);
-    tmp.numerator += rhs.numerator;
+        tmp.numerator += rhs.numerator;
+    else {
+        tmp.reduce_to_common_denominator_with(rhs);
+        tmp.numerator += rhs.numerator;
+    }
+    tmp.reduce();
     return tmp;
-
 }
 
 template<typename T>
-Fraction<T> Fraction<T>::operator/=(const Fraction<T>& rhs) {
+Fraction<T> Fraction<T>::operator/=(Fraction<T>& rhs) {
     this->numerator *= rhs.denominator;
     this->denominator *= rhs.numerator;
     this->reduce();
@@ -199,7 +215,7 @@ Fraction<T> Fraction<T>::operator/=(const Fraction<T>& rhs) {
 }
 
 template<typename T>
-Fraction<T> Fraction<T>::operator*=(const Fraction<T>& rhs) {
+Fraction<T> Fraction<T>::operator*=(Fraction<T>& rhs) {
     this->numerator *= rhs.numerator;
     this->denominator *= rhs.denominator;
     this->reduce();
@@ -207,13 +223,21 @@ Fraction<T> Fraction<T>::operator*=(const Fraction<T>& rhs) {
 }
 
 template<typename T>
-Fraction<T> Fraction<T>::operator/ (const Fraction<T>& rhs) {
-    return Fraction<T>(this->numerator * rhs.denominator, this->denominator * numerator).reduce();
+Fraction<T> Fraction<T>::operator/ (Fraction<T>& rhs) {
+    Fraction<T> tmp(*this);
+    tmp.numerator *= rhs.denominator;
+    tmp.denominator *= rhs.numerator;
+    tmp.reduce();
+    return tmp;
 }
 
 template<typename T>
-Fraction<T> Fraction<T>::operator* (const Fraction<T>& rhs) {
-    return Fraction<T>(this->numerator * rhs.numerator, this->denominator * rhs.denominator).reduce();
+Fraction<T> Fraction<T>::operator* (Fraction<T>& rhs) {
+    Fraction<T> tmp(*this);
+    tmp.numerator *= rhs.numerator;
+    tmp.denominator *= rhs.denominator;
+    tmp.reduce();
+    return tmp;
 }
 
 #endif // FRACTION_H
