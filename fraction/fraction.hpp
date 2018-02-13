@@ -48,7 +48,7 @@ class Fraction {
     T common_denominator_with(Fraction& rhs) { return lcm<T>(this->denominator, rhs.denominator); }
     void reduce_to_common_denominator_with(Fraction& rhs);
     void reduce();
-    uint64_t integer_part();
+    uint64_t integer_part() { return uint64_t((float)numerator/(float)denominator - 0.5); }
 
     bool operator!=(Fraction& rhs);
     bool operator==(Fraction& rhs);
@@ -238,6 +238,26 @@ Fraction<T> Fraction<T>::operator* (Fraction<T>& rhs) {
     tmp.denominator *= rhs.denominator;
     tmp.reduce();
     return tmp;
+}
+
+template<typename T>
+T common_denominator_with(Fraction<T>& lhs, Fraction<T>& rhs) {
+    return lhs.common_denominator_with(rhs);
+}
+
+template<typename T>
+void reduce_to_common_denominator_with(Fraction<T>& lhs, Fraction<T>& rhs) {
+    lhs.reduce_to_common_denominator_with(rhs);
+}
+
+template<typename T>
+void reduce(Fraction<T>& rhs) {
+    rhs.reduce();
+}
+
+template<typename T>
+uint64_t integer_part(Fraction<T>& lhs, Fraction<T>& rhs) {
+    return lhs.integer_part(rhs);
 }
 
 #endif // FRACTION_H
