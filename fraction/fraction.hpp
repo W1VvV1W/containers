@@ -9,12 +9,14 @@
 
 #include <numeric>
 
+
 #include <stdint.h>
 
 /** GCD and LCM from stack overflow :3
 *  If you are going to include this file to your project,
-*  include a file with your gcd and lcm to avoid errors
+*  include a file with your gcd and lcm÷ to avoid errors
 */
+
 template<typename T>
 T gcd(T a, T b)
 {
@@ -49,6 +51,7 @@ class Fraction {
     void reduce_to_common_denominator_with(Fraction& rhs);
     void reduce();
     uint64_t integer_part() { return uint64_t((float)numerator/(float)denominator - 0.5); }
+    void power(long double exp) { numerator*=exp; denominator*=exp; }
 
     bool operator!=(Fraction& rhs);
     bool operator==(Fraction& rhs);
@@ -71,7 +74,6 @@ class Fraction {
     Fraction operator*=(Fraction& rhs);
     Fraction operator/ (Fraction& rhs);
     Fraction operator* (Fraction& rhs);
-
 };
 
 template<typename T>
@@ -256,8 +258,21 @@ void reduce(Fraction<T>& rhs) {
 }
 
 template<typename T>
-uint64_t integer_part(Fraction<T>& lhs, Fraction<T>& rhs) {
-    return lhs.integer_part(rhs);
+uint64_t integer_part(Fraction<T>& rhs) {
+    return rhs.integer_part();
 }
 
+#ifdef _GLIBCXX_CMATH
+
+namespace std {
+    template<typename T>
+    void pow(Fraction<T>& rhs, long double exp) {
+        rhs.numerator *= exp;
+        rhs.denominator *= exp;
+    }
+}
+
+#endif
+
 #endif // FRACTION_H
+
