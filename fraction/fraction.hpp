@@ -8,13 +8,13 @@
 #define FRACTION_H
 
 #include <numeric>
-
+#include <cmath>
 
 #include <stdint.h>
 
 /** GCD and LCM from stack overflow :3
 *  If you are going to include this file to your project,
-*  include a file with your gcd and lcm÷ to avoid errors
+*  include a file with your gcd and lcm to avoid errors
 */
 
 template<typename T>
@@ -51,7 +51,7 @@ class Fraction {
     void reduce_to_common_denominator_with(Fraction& rhs);
     void reduce();
     uint64_t integer_part() { return uint64_t((float)numerator/(float)denominator - 0.5); }
-    void power(long double exp) { numerator*=exp; denominator*=exp; }
+    void power(long double exp) { std::pow(numerator, exp); std::pow(denominator, exp); }
 
     bool operator!=(Fraction& rhs);
     bool operator==(Fraction& rhs);
@@ -262,17 +262,13 @@ uint64_t integer_part(Fraction<T>& rhs) {
     return rhs.integer_part();
 }
 
-#ifdef _GLIBCXX_CMATH
-
 namespace std {
     template<typename T>
     void pow(Fraction<T>& rhs, long double exp) {
-        rhs.numerator *= exp;
-        rhs.denominator *= exp;
+        std::pow(rhs.numerator, exp);
+        std::pow(rhs.denominator, exp);
     }
 }
 
-#endif
 
 #endif // FRACTION_H
-
