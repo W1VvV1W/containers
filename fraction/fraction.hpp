@@ -14,7 +14,7 @@
 
 /** GCD and LCM from stack overflow :3
 *  If you are going to include this file to your project,
-*  include a file with your gcd and lcm to avoid errors
+*  include a file with your gcd and lcm declaration to avoid errors
 */
 
 template<typename T>
