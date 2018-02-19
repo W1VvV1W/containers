@@ -39,7 +39,6 @@ class LinkedList {
 public:
 	LinkedList() {}
 	LinkedList(LinkedList& rhs) { *this = rhs; }
-	LinkedList(std::initializer_list<T> init);
 	virtual ~LinkedList() { clear(); }
 
 	void clear() noexcept;
@@ -67,12 +66,6 @@ public:
 
 };
 
-template<class T>
-LinkedList<T>::LinkedList(std::initializer_list<T> init) {
-    list_size = init.size();
-    for(int i = 0; i < list_size; ++i)
-        push_back(*(init.begin()+i));
-}
 
 template<class T>
 LinkedList<T>& LinkedList<T>::operator=(LinkedList<T>& rhs) {
@@ -106,7 +99,9 @@ void LinkedList<T>::push_front(const T&& rhs) {
 
 template<class T>
 void LinkedList<T>::push_back(const T&& rhs) {
-    Element* new_element(end, nullptr, rhs);
+    Element* new_element;
+    new_element->next = nullptr;
+    new_element->prev = end;
     end = new_element;
     ++list_size;
 }
