@@ -4,8 +4,8 @@
 @license - MIT.
 */
 
-#ifndef FRACTION_H
-#define FRACTION_H
+#ifndef FRACTION_HPP
+#define FRACTION_HPP
 
 #include <numeric>
 #include <cmath>
@@ -50,7 +50,7 @@ class Fraction {
     T common_denominator_with(Fraction& rhs) { return lcm<T>(this->denominator, rhs.denominator); }
     void reduce_to_common_denominator_with(Fraction& rhs);
     void reduce();
-    uint64_t integer_part() { return uint64_t((float)numerator/(float)denominator - 0.5); }
+    uint64_t integer_part() { return uint64_t((float)numerator/(float)denominator - 0.5f); }
     void power(long double exp) { std::pow(numerator, exp); std::pow(denominator, exp); }
 
     bool operator!=(Fraction& rhs);
@@ -271,4 +271,4 @@ namespace std {
 }
 
 
-#endif // FRACTION_H
+#endif // FRACTION_HPP
