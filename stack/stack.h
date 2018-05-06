@@ -22,12 +22,12 @@ class Stack {
 
 public:
 	Stack() {}
-	Stack(int64_t max_size_arg) : max_size(max_size_arg) {}
+	Stack(uint64_t max_size_arg) : max_size(max_size_arg+1) {}
 	Stack(Stack& other);
 	~Stack() { clear(); }
 
 	void clear();
-	void set_max_size(int64_t max_size_arg)
+	void set_max_size(uint64_t max_size_arg)
 		{ max_size = max_size_arg + 1; }
 	uint64_t size() const noexcept { return stack_size; }
 	bool empty() const noexcept { return !stack_size; }
