@@ -18,7 +18,7 @@ class Stack {
 
 	Element* root = nullptr;
 	uint64_t stack_size = 0;
-	int64_t max_size = -1;
+	uint64_t max_size = 0;
 
 public:
 	Stack() {}
@@ -28,10 +28,10 @@ public:
 
 	void clear();
 	void set_max_size(int64_t max_size_arg)
-		{ max_size = max_size_arg; }
+		{ max_size = max_size_arg + 1; }
 	uint64_t size() const noexcept { return stack_size; }
 	bool empty() const noexcept { return !stack_size; }
-	bool completed() const noexcept { return max_size != -1 &&stack_size >= max_size; }
+	bool completed() const noexcept { return max_size != -1 &&stack_size >= max_size - 1; }
 
 	void swap(Stack<T>& other);
 
